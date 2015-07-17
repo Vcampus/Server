@@ -20,7 +20,6 @@ public class ServerMain {
 		ServerListener serverListener=new ServerListener();
 		serverListener.start();
 		TestClient testClient = new TestClient();
-		testClient.start();
 	}
 
 }
