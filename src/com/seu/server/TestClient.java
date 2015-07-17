@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.Socket;
 
@@ -15,31 +17,15 @@ public class TestClient {
     BufferedReader br = null;
     PrintWriter pw = null;
     public TestClient(){
+        try {
+            //客户端socket指定服务器的地址和端口号
+            socket = new Socket("127.0.0.1", 8000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        TestClientFrame testClientFrame = new TestClientFrame();
 
-        JFrame Client=new JFrame("TestClient");
-        JButton ButtonSend=new JButton("Send");
-        Client.add(ButtonSend);
-        Client.setBounds(0,0,200,100);
-        Client.show();
-        ButtonSend.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Thread send=new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            //客户端socket指定服务器的地址和端口号
-                            socket = new Socket("127.0.0.1", 8000);
-                            sendMessage(socket,"ooo");
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                send.start();
-            }
-        });
     }
 
     public void sendMessage(Socket s,String strSend){
@@ -60,16 +46,47 @@ public class TestClient {
             pw.flush();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                System.out.println("close");
-                br.close();
-                pw.close();
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
+
+    }
+
+    private class TestClientFrame extends JFrame{
+        public TestClientFrame(){
+            setTitle("TestClient");
+            JButton ButtonSend=new JButton("Send");
+            add(ButtonSend);
+            setBounds(0, 0, 200, 100);
+            show();
+            ButtonSend.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Thread send=new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendMessage(socket,"ooo");
+                        }
+                    });
+                    send.start();
+                }
+            });
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    System.out.println("Client: Exit");
+                    System.exit(0);
+                    try {
+                        System.out.println("close");
+                        br.close();
+                        pw.close();
+                        socket.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            });
+        }
+
 
     }
 }
