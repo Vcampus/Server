@@ -16,34 +16,57 @@ public class TestClient {
     Socket socket;
     BufferedReader br = null;
     PrintWriter pw = null;
+    static int count=0;
     public TestClient(){
         try {
             //客户端socket指定服务器的地址和端口号
             socket = new Socket("127.0.0.1", 8000);
+            System.out.println("Client： 已连接到Socket=" + socket);
+            br = new BufferedReader(new InputStreamReader(
+                    socket.getInputStream()));
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                    socket.getOutputStream())));
+            Thread clientListener = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String line=null;
+                    System.out.println("Client: 开始监听服务器返回结果");
+                    try {
+                        while((line = br.readLine()) !=null){
+                            System.out.println("Client receive:"+line);
+                        }
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                        System.out.println("Client receive error");
+                    }
+                }
+            });
+            clientListener.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
         TestClientFrame testClientFrame = new TestClientFrame();
 
-
     }
 
+    /**
+     *
+     * @param s
+     * @param strSend
+     */
     public void sendMessage(Socket s,String strSend){
         try {
             //客户端socket指定服务器的地址和端口号
+
             socket = s;
-            System.out.println("Socket=" + socket);
             //同服务器原理一样
-            br = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-                    socket.getOutputStream())));
-            pw.println(strSend);
+            System.out.println("re");
+            pw.println(strSend+count);
+            count++;
+            //调用flush方法后会清空输入缓存并且向服务器发送消息
             pw.flush();
-            String str = br.readLine();
-            System.out.println(str);
-            pw.println("END");
-            pw.flush();
+            System.out.println("re");
         } catch (Exception e) {
             e.printStackTrace();
         }

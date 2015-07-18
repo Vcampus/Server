@@ -10,15 +10,16 @@ import java.net.Socket;
  */
 public class ServerThread extends Thread{
     private Socket socket;
+    private BufferedReader br;
+    private PrintWriter pw;
 
     public ServerThread(Socket s){
-        this.socket=s;
+        socket=s;
     }
 
     public void out(String out) {
         try{
             socket.getOutputStream().write((out+"\n").getBytes("UTF-8"));
-
         }catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -33,13 +34,15 @@ public class ServerThread extends Thread{
     public void run() {
         out("Server: 已连接到服务器");
         try {
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(
+            br = new BufferedReader(new InputStreamReader(
                             socket.getInputStream(),"UTF-8"));
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                    socket.getOutputStream(),"UTF-8")));
             String line = null;
-            while (true) {
-                if((line = br.readLine()) != null)
-                    System.out.println(line);
+            while ((line = br.readLine()) != null) {
+                System.out.println("Server： 服务端已收到消息："+line);
+                pw.println("Server ：服务端已收到消息");
+                pw.flush();
                 ServerThreadManager.getServerThreadManager().publish(this, line);
             }
 
