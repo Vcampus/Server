@@ -49,7 +49,7 @@ public class ServerThreadManager {
      * @param out
      * 向目标线程发送消息
      */
-    public void publish(ServerThread st,String out) {
+    public void publish(ServerThread st,Message out) {
         for (int i = 0; i < vector.size(); i++) {
             ServerThread stServerThread= vector.get(i);
             if (st.equals(stServerThread)) {
@@ -57,5 +57,4 @@ public class ServerThreadManager {
             }
         }
     }
-
 }

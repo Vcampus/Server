@@ -29,6 +29,7 @@ public class TestClient {
 
             try{
                 oos = new ObjectOutputStream(socket.getOutputStream());
+                ois = new ObjectInputStream(socket.getInputStream());
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -66,8 +67,8 @@ public class TestClient {
 
     /**
      *
-     * @param s
-     * @param strSend
+     * @param s  要使用的socket链接
+     * @param strSend     通过socket连接向服务器发送的消息
      */
     public void sendMessage(Socket s,Message strSend){
         try {
@@ -100,6 +101,23 @@ public class TestClient {
                                 js.put("password","1995126");
                                 Message s = new Message("a",10,10,js.toString());
                                 sendMessage(socket, s);
+//                                Message msg;
+//                                try {
+//                                    while(true){
+//                                        if((msg = (Message)ois.readObject()) !=null){
+//                                            System.out.println("Client receive:"+msg.data+count);
+//                                            count++;
+//                                            break;
+//                                        }
+//                                    }
+//                                }catch (IOException e){
+//                                    e.printStackTrace();
+//                                    System.out.println("Client receive error");
+//                                }catch (ClassNotFoundException e1){
+//                                    e1.printStackTrace();
+//                                }catch (NullPointerException e2){
+//                                    //e2.printStackTrace();
+//                                }
                             }catch (JSONException e){
                                 e.printStackTrace();
                             }

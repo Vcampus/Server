@@ -17,6 +17,10 @@ public class ServerThread extends Thread{
     ObjectInputStream ois;
     ObjectOutputStream oos;
 
+    /**
+     *
+     * @param s  用于初始化Server线程的socket连接
+     */
     public ServerThread(Socket s){
         socket=s;
         try{
@@ -28,6 +32,10 @@ public class ServerThread extends Thread{
 
     }
 
+    /**
+     *
+     * @param out  要向客户端返回的Message
+     */
     public void out(Message out) {
         try{
             System.out.println("Server: 服务器答复");
@@ -48,7 +56,7 @@ public class ServerThread extends Thread{
 
             //pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
             //        socket.getOutputStream(),"UTF-8")));
-            String line = null;
+//            String line = null;
 //            while ((line = br.readLine()) != null) {
 //                System.out.println("Server： 服务端已收到消息："+line);
 //                ServerThreadManager.getServerThreadManager().publish(this, line);
