@@ -21,18 +21,38 @@ public class ServerThreadManager {
     //方法
     private ServerThreadManager(){}
 
+    /**
+     *
+     * @param st
+     * st 是要加入到线程管理器中的ServerThread线程
+     *
+     */
     public void add(ServerThread st){
         vector.add(st);
     }
 
+    /**
+     *
+     * @param st
+     * 要从线程管理器中移除的线程
+     *
+     */
     public void remove(ServerThread st) {
         vector.remove(st);
     }
 
-    public void publish(ServerThread cs,String out) {
+    /**
+     *
+     * @param st
+     * 要在管理器中查找的目标线程
+     *
+     * @param out
+     * 向目标线程发送消息
+     */
+    public void publish(ServerThread st,String out) {
         for (int i = 0; i < vector.size(); i++) {
             ServerThread stServerThread= vector.get(i);
-            if (!cs.equals(stServerThread)) {
+            if (st.equals(stServerThread)) {
                 stServerThread.out(out);
             }
         }

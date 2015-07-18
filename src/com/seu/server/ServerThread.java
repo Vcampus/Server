@@ -19,13 +19,13 @@ public class ServerThread extends Thread{
 
     public void out(String out) {
         try{
-            socket.getOutputStream().write((out+"\n").getBytes("UTF-8"));
-        }catch (UnsupportedEncodingException e) {
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                    socket.getOutputStream(),"UTF-8")));
+            pw.println(out);
+            pw.flush();
+        }catch (IOException e){
             e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("Server: 断开了一个客户端链接");
-            ServerThreadManager.getServerThreadManager().remove(this);
-            e.printStackTrace();
+            System.out.println("Server: Exception in funciton out");
         }
     }
 
@@ -41,11 +41,8 @@ public class ServerThread extends Thread{
             String line = null;
             while ((line = br.readLine()) != null) {
                 System.out.println("Server： 服务端已收到消息："+line);
-                pw.println("Server ：服务端已收到消息");
-                pw.flush();
                 ServerThreadManager.getServerThreadManager().publish(this, line);
             }
-
             //ServerThreadManager.getServerThreadManager().remove(this);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

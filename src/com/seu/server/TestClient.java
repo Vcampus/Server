@@ -61,12 +61,10 @@ public class TestClient {
 
             socket = s;
             //同服务器原理一样
-            System.out.println("re");
             pw.println(strSend+count);
             count++;
             //调用flush方法后会清空输入缓存并且向服务器发送消息
             pw.flush();
-            System.out.println("re");
         } catch (Exception e) {
             e.printStackTrace();
         }
