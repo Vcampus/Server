@@ -19,6 +19,8 @@ public class ServerMain {
 		ServerListener serverListener=new ServerListener();
 		serverListener.start();
 		TestClient testClient = new TestClient();
+		DbHelper db=new DbHelper();
+		db.execute("select * from grade",1);
 	}
 
 }
