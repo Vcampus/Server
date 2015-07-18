@@ -1,5 +1,8 @@
 package com.seu.server;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
@@ -19,8 +22,13 @@ public class ServerMain {
 		ServerListener serverListener=new ServerListener();
 		serverListener.start();
 		TestClient testClient = new TestClient();
-		DbHelper db=new DbHelper();
-		db.execute("select * from grade",1);
+		//DbHelper db=new DbHelper();
+
+		//String s=db.execute("select * from grade",1).toString();
+		ServerClient s=new ServerClient();
+		s.execute(new Message("",0,0,"Test for serverclient"));
+
+
 	}
 
 }

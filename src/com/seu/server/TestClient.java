@@ -30,6 +30,7 @@ public class TestClient {
             try{
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 ois = new ObjectInputStream(socket.getInputStream());
+
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -57,7 +58,7 @@ public class TestClient {
                     }
                 }
             });
-            clientListener.start();
+            //clientListener.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,7 +74,7 @@ public class TestClient {
     public void sendMessage(Socket s,Message strSend){
         try {
             //客户端socket指定服务器的地址和端口号
-            socket = s;
+            //socket = s;
             //同服务器原理一样
             oos.writeObject(strSend);
         } catch (Exception e) {
@@ -100,8 +101,9 @@ public class TestClient {
                                 js.put("username","He");
                                 js.put("password","1995126");
                                 Message s = new Message("a",10,10,js.toString());
-                                sendMessage(socket, s);
-//                                Message msg;
+                                oos.writeObject(new Message("",0,0,"s"));
+                                //sendMessage(socket, s);
+                                Message msg;
 //                                try {
 //                                    while(true){
 //                                        if((msg = (Message)ois.readObject()) !=null){
@@ -116,10 +118,12 @@ public class TestClient {
 //                                }catch (ClassNotFoundException e1){
 //                                    e1.printStackTrace();
 //                                }catch (NullPointerException e2){
-//                                    //e2.printStackTrace();
+//                                    e2.printStackTrace();
 //                                }
                             }catch (JSONException e){
                                 e.printStackTrace();
+                            }catch (IOException e1){
+                                e1.printStackTrace();
                             }
                         }
                     });
