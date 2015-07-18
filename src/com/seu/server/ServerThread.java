@@ -1,5 +1,7 @@
 package com.seu.server;
 
+import javafx.beans.binding.ObjectExpression;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -12,17 +14,24 @@ public class ServerThread extends Thread{
     private Socket socket;
     private BufferedReader br;
     private PrintWriter pw;
+    ObjectInputStream ois;
+    ObjectOutputStream oos;
 
     public ServerThread(Socket s){
         socket=s;
+        try{
+            ois = new ObjectInputStream(socket.getInputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
-    public void out(String out) {
+    public void out(Message out) {
         try{
-            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-                    socket.getOutputStream(),"UTF-8")));
-            pw.println(out);
-            pw.flush();
+            System.out.println("Server: 服务器答复");
+            oos.writeObject(out);
         }catch (IOException e){
             e.printStackTrace();
             System.out.println("Server: Exception in funciton out");
@@ -32,16 +41,28 @@ public class ServerThread extends Thread{
 
     @Override
     public void run() {
-        out("Server: 已连接到服务器");
+        //out(new Message("",0,0,"服务器已链接"));
         try {
-            br = new BufferedReader(new InputStreamReader(
-                            socket.getInputStream(),"UTF-8"));
-            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-                    socket.getOutputStream(),"UTF-8")));
+//            br = new BufferedReader(new InputStreamReader(
+//                    socket.getInputStream(),"UTF-8"));
+
+            //pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+            //        socket.getOutputStream(),"UTF-8")));
             String line = null;
-            while ((line = br.readLine()) != null) {
-                System.out.println("Server： 服务端已收到消息："+line);
-                ServerThreadManager.getServerThreadManager().publish(this, line);
+//            while ((line = br.readLine()) != null) {
+//                System.out.println("Server： 服务端已收到消息："+line);
+//                ServerThreadManager.getServerThreadManager().publish(this, line);
+//            }
+            Message msg = null;
+            while (true) {
+                try{
+                    if((msg = (Message) ois.readObject()) != null) {
+                        System.out.println("Server： 服务端已收到msg：" + msg.data);
+                        ServerThreadManager.getServerThreadManager().publish(this, msg);
+                    }
+                }catch (ClassNotFoundException e){
+                    e.printStackTrace();
+                }
             }
             //ServerThreadManager.getServerThreadManager().remove(this);
         } catch (UnsupportedEncodingException e) {
@@ -52,7 +73,4 @@ public class ServerThread extends Thread{
             e.printStackTrace();
         }
     }
-
-
-
 }

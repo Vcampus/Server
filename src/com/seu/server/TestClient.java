@@ -1,5 +1,8 @@
 package com.seu.server;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,37 +11,48 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.Socket;
+import java.util.UUID;
 
 /**
  * Created by He on 2015/7/17.
  */
 public class TestClient {
     Socket socket;
-    BufferedReader br = null;
-    PrintWriter pw = null;
+    ObjectInputStream  ois;
+    ObjectOutputStream oos;
     static int count=0;
     public TestClient(){
         try {
             //客户端socket指定服务器的地址和端口号
             socket = new Socket("127.0.0.1", 8000);
             System.out.println("Client： 已连接到Socket=" + socket);
-            br = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-                    socket.getOutputStream())));
+
+            try{
+                oos = new ObjectOutputStream(socket.getOutputStream());
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+
+            //下面的线程用于监听服务器返回的结果
             Thread clientListener = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    String line=null;
+                    Message msg=null;
                     System.out.println("Client: 开始监听服务器返回结果");
                     try {
-                        while((line = br.readLine()) !=null){
-                            System.out.println("Client receive:"+line);
+                        while(true){
+                            if((msg = (Message)ois.readObject()) !=null){
+                                System.out.println("Client receive:"+msg.data);
+                            }
                         }
-                    }
-                    catch (IOException e){
+                    }catch (IOException e){
                         e.printStackTrace();
                         System.out.println("Client receive error");
+                    }catch (ClassNotFoundException e1){
+                        e1.printStackTrace();
+                    }catch (NullPointerException e2){
+                        e2.printStackTrace();
                     }
                 }
             });
@@ -55,16 +69,12 @@ public class TestClient {
      * @param s
      * @param strSend
      */
-    public void sendMessage(Socket s,String strSend){
+    public void sendMessage(Socket s,Message strSend){
         try {
             //客户端socket指定服务器的地址和端口号
-
             socket = s;
             //同服务器原理一样
-            pw.println(strSend+count);
-            count++;
-            //调用flush方法后会清空输入缓存并且向服务器发送消息
-            pw.flush();
+            oos.writeObject(strSend);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +94,15 @@ public class TestClient {
                     Thread send=new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            sendMessage(socket,"ooo");
+                            JSONObject js=new JSONObject();
+                            try{
+                                js.put("username","He");
+                                js.put("password","1995126");
+                                Message s = new Message("a",10,10,js.toString());
+                                sendMessage(socket, s);
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
                         }
                     });
                     send.start();
@@ -98,8 +116,8 @@ public class TestClient {
                     System.exit(0);
                     try {
                         System.out.println("close");
-                        br.close();
-                        pw.close();
+                        ois.close();
+                        oos.close();
                         socket.close();
                     } catch (IOException e1) {
                         e1.printStackTrace();
