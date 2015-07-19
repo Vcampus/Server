@@ -40,7 +40,7 @@ public class OAuthHelper{
                 return false;
             String sql = "SELECT * FROM USER WHERE uuid = "+uuid;
             JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.SELECT));
-            System.out.println(dbrespond.getJSONArray("data").opt(0));
+            System.out.println("OAuthhelper.isLogined:"+dbrespond.getJSONArray("data").opt(0));
             if(dbrespond.getJSONArray("data").opt(0) != null)
                 return true;
             else return false;

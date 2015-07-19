@@ -45,7 +45,7 @@ public class MessageFactory {
     public static Message getDefaultRespondMessage(String uid,int code,String str_data,String status){
         try {
             JSONObject data = new JSONObject();
-            data.put("data","");
+            data.put("data",str_data);
             data.put("sql","");
             data.put("status",status);
             data.put("uuid","");

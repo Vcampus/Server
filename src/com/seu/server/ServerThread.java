@@ -66,7 +66,11 @@ public class ServerThread extends Thread{
                            respond = dealGet(msg);
                             break;
                         case POST:
+                            respond = dealPost(msg);
+                            break;
                         case UPDATE:
+                            respond = dealUpdate(msg);
+                            break;
                         case OAUTH:
                             break;
                         default:
@@ -97,9 +101,15 @@ public class ServerThread extends Thread{
                 JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.SELECT));
                 System.out.println("Server.Thread.dealGet："+dbrespond);
                 System.out.println("Server.Thread.dealGet："+dbrespond.getString("status"));
-                return MessageFactory.getDefaultRespondMessage(msg.uid, 200,
-                        dbrespond.getJSONArray("data"),
-                        dbrespond.getString("status"));
+                if(dbrespond.getString("status").toString().equals("success")){
+                    return MessageFactory.getDefaultRespondMessage(msg.uid, 200,
+                            dbrespond.getJSONArray("data"),
+                            dbrespond.getString("status"));
+                } else{
+                    return MessageFactory.getDefaultRespondMessage(msg.uid, 200,
+                            dbrespond.getString("data"),
+                            dbrespond.getString("status"));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
                 return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong from of data");
@@ -108,18 +118,21 @@ public class ServerThread extends Thread{
         return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","invalid uuid");
     }
 
-//    public Message dealPost(Message msg){
-//
-//    }
-//
+    public Message dealPost(Message msg){
+        return null;
+    }
+
     public Message dealUpdate(Message msg){
         if(oAuthHelper.isLogined(msg)){
             try {
                 String sql = new JSONObject(msg.data).getString("sql");
                 JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.UPDATA));
+                System.out.println("Server.Thread.dealUpdate："+dbrespond);
+                System.out.println("Server.Thread.dealUpdate："+dbrespond.getString("data"));
                 return MessageFactory.getDefaultRespondMessage(msg.uid, 200,
-                        dbrespond.getJSONArray("data"),
-                        "success");
+                        dbrespond.getString("data"),
+                        dbrespond.getString("status"));
+
             } catch (JSONException e) {
                 e.printStackTrace();
                 return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong from of data");
@@ -127,10 +140,10 @@ public class ServerThread extends Thread{
         }
         return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","invalid uuid");
     }
-//
-//    public Message dealOauth(Message msg){
-//
-//    }
+
+    public Message dealOauth(Message msg){
+        return null;
+    }
 
 
 }

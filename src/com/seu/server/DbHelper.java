@@ -85,7 +85,7 @@ public class DbHelper {
                     }
                     result.put("status","success");
                     result.put("data",dataarray);
-                    //System.out.println(result.toString());
+                    System.out.println("DbHelper.excute:"+result);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -102,8 +102,10 @@ public class DbHelper {
             default:
                 try {
                     int success=executeUpdate(sql);
-                    result.put("status","success");
-                    result.put("data",success+" col is updated.");
+                    result.put("status", "success");
+                    result.put("data","Update col:"+success);
+                    System.out.println("DbHelper.excute"+result);
+
                 }
                 catch (Exception e){
                     e.printStackTrace();

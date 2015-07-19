@@ -27,7 +27,8 @@ public class ServerMain {
 
 		//String s=db.execute("select * from grade",1).toString();
 		ServerClient s=new ServerClient();
-		Message msg = MessageFactory.getDefaultAskMessage("11111111","select * from grade", Message.TYPE.GET);
+		Message msg = MessageFactory.getDefaultAskMessage("11111111",
+				"INSERT INTO `course`.`user` (`username`, `digested_password`, `uuid`) VALUES ('Test2', '1232442', '2123312')", Message.TYPE.UPDATE);
 		String data =msg.data;
 		String es = s.execute(msg).data;
 		System.out.print(es);
