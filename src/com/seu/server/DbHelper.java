@@ -60,10 +60,10 @@ public class DbHelper {
      * @param TYPE_SQL  要执行的sql语句的类型
      *
      */
-    public JSONObject execute(String sql,int TYPE_SQL){
+    public String execute(String sql,int TYPE_SQL){
         JSONObject result=new JSONObject();
         switch (TYPE_SQL){
-            case 1:
+            case SELECT:
                 try {
                     rs = executeQuery(sql);
                     ResultSetMetaData rsmd = rs.getMetaData();
@@ -83,16 +83,10 @@ public class DbHelper {
                         }
                         dataarray.put(dataobject);
                     }
-                    result.put("status:","success");
+                    result.put("status","success");
                     result.put("data",dataarray);
                     //System.out.println(result.toString());
                 }
-//                catch (SQLException e1){
-//                    e1.printStackTrace();
-//
-//                }catch (JSONException e2){
-//                    e2.printStackTrace();
-//                }
                 catch (Exception e){
                     e.printStackTrace();
                     try{
@@ -102,9 +96,8 @@ public class DbHelper {
                     }catch (JSONException e1){
                         e1.printStackTrace();
                     }
-
                 }finally {
-                    return result;
+                    return result.toString();
                 }
             default:
                 try {
@@ -112,19 +105,16 @@ public class DbHelper {
                     result.put("status","success");
                     result.put("data",success+" col is updated.");
                 }
-//                catch (SQLException e1){
-//                    e1.printStackTrace();
-//                    System.out.println("SQLException throws in executeUpdate");
-//                }
                 catch (Exception e){
                     e.printStackTrace();
                     try {
-                        result.put("data",e.getMessage());
+                        result.put("status",e.getMessage());
+                        result.put("data","");
                     }catch (JSONException e1){
                         e1.printStackTrace();
                     }
                 }finally {
-                    return result;
+                    return result.toString();
                 }
         }
     }

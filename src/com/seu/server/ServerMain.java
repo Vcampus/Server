@@ -3,6 +3,7 @@ package com.seu.server;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
@@ -21,13 +22,15 @@ public class ServerMain {
 		System.out.println("Server: Server running..");
 		ServerListener serverListener=new ServerListener();
 		serverListener.start();
-		TestClient testClient = new TestClient();
+		//TestClient testClient = new TestClient();
 		//DbHelper db=new DbHelper();
 
 		//String s=db.execute("select * from grade",1).toString();
 		ServerClient s=new ServerClient();
-		s.execute(new Message("",0,0,"Test for serverclient"));
-
+		Message msg = MessageFactory.getDefaultAskMessage("11111111","select * from grade", Message.TYPE.GET);
+		String data =msg.data;
+		String es = s.execute(msg).data;
+		System.out.print(es);
 
 	}
 

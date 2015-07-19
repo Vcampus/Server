@@ -18,6 +18,7 @@ public class ServerClient {
     Socket socket;
     ObjectInputStream ois;
     ObjectOutputStream oos;
+
     public ServerClient(){
         try {
             socket = new Socket("127.0.0.1", 8000);
@@ -48,7 +49,7 @@ public class ServerClient {
         catch (ClassNotFoundException e1){
             e1.printStackTrace();
         }
-        return new Message("",0,0,"{\"data\",\"unknown error\"\"}");
+        return new Message("", Message.TYPE.GET,0,"{\"data\",\"unknown error\"\"}");
     }
 
 

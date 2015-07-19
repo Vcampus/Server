@@ -1,6 +1,8 @@
 package com.seu.server;
 
 import javafx.beans.binding.ObjectExpression;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,6 +18,8 @@ public class ServerThread extends Thread{
     private PrintWriter pw;
     ObjectInputStream ois;
     ObjectOutputStream oos;
+    OAuthHelper oAuthHelper;
+    DbHelper dbHelper;
 
     /**
      *
@@ -23,6 +27,8 @@ public class ServerThread extends Thread{
      */
     public ServerThread(Socket s){
         socket=s;
+        oAuthHelper = new OAuthHelper();
+        dbHelper = new DbHelper();
         try{
             ois = new ObjectInputStream(socket.getInputStream());
             oos = new ObjectOutputStream(socket.getOutputStream());
@@ -38,7 +44,7 @@ public class ServerThread extends Thread{
      */
     public void out(Message out) {
         try{
-            System.out.println("Server: 服务器答复");
+            System.out.println("ServerThread.out：Server: 服务器答复");
             oos.writeObject(out);
         }catch (IOException e){
             e.printStackTrace();
@@ -49,36 +55,82 @@ public class ServerThread extends Thread{
 
     @Override
     public void run() {
-        //out(new Message("",0,0,"服务器已链接"));
         try {
-//            br = new BufferedReader(new InputStreamReader(
-//                    socket.getInputStream(),"UTF-8"));
-
-            //pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-            //        socket.getOutputStream(),"UTF-8")));
-//            String line = null;
-//            while ((line = br.readLine()) != null) {
-//                System.out.println("Server： 服务端已收到消息："+line);
-//                ServerThreadManager.getServerThreadManager().publish(this, line);
-//            }
             Message msg = null;
             while (true) {
-                try{
-                    if((msg = (Message) ois.readObject()) != null) {
-                        System.out.println("Server： 服务端已收到msg：" + msg.data);
-                        ServerThreadManager.getServerThreadManager().publish(this, msg);
+                if((msg = (Message) ois.readObject()) != null) {
+                    System.out.println("Server： 服务端已收到msg：" + msg.data);
+                    Message respond = null;
+                    switch (msg.type){
+                        case GET:
+                           respond = dealGet(msg);
+                            break;
+                        case POST:
+                        case UPDATE:
+                        case OAUTH:
+                            break;
+                        default:
+                            respond = MessageFactory.getDefaultRespondMessage(msg.uid,400,
+                                    "","Wrong from of type");
+                            break;
                     }
-                }catch (ClassNotFoundException e){
-                    e.printStackTrace();
+                    ServerThreadManager.getServerThreadManager().publish(this, respond);
                 }
             }
-            //ServerThreadManager.getServerThreadManager().remove(this);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             System.out.println("断开了一个客户端链接");
             ServerThreadManager.getServerThreadManager().remove(this);
             e.printStackTrace();
+        } catch (ClassNotFoundException e){
+            e.printStackTrace();
         }
     }
+
+
+
+    public Message dealGet(Message msg){
+        if(oAuthHelper.isLogined(msg)){
+            try {
+                String sql = new JSONObject(msg.data).getString("sql");
+                JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.SELECT));
+                System.out.println("Server.Thread.dealGet："+dbrespond);
+                System.out.println("Server.Thread.dealGet："+dbrespond.getString("status"));
+                return MessageFactory.getDefaultRespondMessage(msg.uid, 200,
+                        dbrespond.getJSONArray("data"),
+                        dbrespond.getString("status"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong from of data");
+            }
+        }
+        return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","invalid uuid");
+    }
+
+//    public Message dealPost(Message msg){
+//
+//    }
+//
+    public Message dealUpdate(Message msg){
+        if(oAuthHelper.isLogined(msg)){
+            try {
+                String sql = new JSONObject(msg.data).getString("sql");
+                JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.UPDATA));
+                return MessageFactory.getDefaultRespondMessage(msg.uid, 200,
+                        dbrespond.getJSONArray("data"),
+                        "success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong from of data");
+            }
+        }
+        return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","invalid uuid");
+    }
+//
+//    public Message dealOauth(Message msg){
+//
+//    }
+
+
 }

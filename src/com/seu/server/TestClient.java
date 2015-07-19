@@ -58,7 +58,7 @@ public class TestClient {
                     }
                 }
             });
-            //clientListener.start();
+            clientListener.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,8 +100,8 @@ public class TestClient {
                             try{
                                 js.put("username","He");
                                 js.put("password","1995126");
-                                Message s = new Message("a",10,10,js.toString());
-                                oos.writeObject(new Message("",0,0,"s"));
+                                Message s = new Message("a", Message.TYPE.POST,10,js.toString());
+                                oos.writeObject(new Message("", Message.TYPE.POST,0,"s"));
                                 //sendMessage(socket, s);
                                 Message msg;
 //                                try {

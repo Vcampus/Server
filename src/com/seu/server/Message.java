@@ -10,15 +10,27 @@ import java.io.Serializable;
  * 通信消息
  */
 public class Message implements Serializable {
+    public enum TYPE{
+        GET,
+        POST,
+        UPDATE,
+        OAUTH
+    }
     String uid;
-    int type;
+    TYPE type;
     int code;
     String data;
-    public Message(String uid,int type,int code,String data){
+    public Message(String uid,TYPE type,int code,String data){
         this.uid = uid;
         this.type = type;
         this.code = code;
         this.data = data;
     }
+
+
+
+
+
+
 
 }
