@@ -1,6 +1,5 @@
 package com.seu.server;
 
-import javafx.beans.binding.ObjectExpression;
 import org.json.JSONException;
 import org.json.JSONObject;
 

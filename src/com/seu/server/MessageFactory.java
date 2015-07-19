@@ -14,7 +14,7 @@ public class MessageFactory {
     public MessageFactory(){}
     /**
      *
-     * @param uuid 用于认证的uuid，当使用不需要登陆即可响应的请求时可以直接填空的
+     * @param uuid 用于认证的uuid，当使用不需要登陆即可响应的请求时,可以直接填空的
      * @param sql   需要服务器执行的sql语句
      * @param type  报文类型
      * @return      返回默认的用于向服务器发送请求的报文

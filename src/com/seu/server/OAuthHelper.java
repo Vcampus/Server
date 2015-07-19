@@ -2,8 +2,6 @@ package com.seu.server;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import javax.security.auth.login.LoginException;
 import java.util.UUID;
 
 /**

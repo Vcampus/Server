@@ -1,15 +1,8 @@
 package com.seu.server;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.Socket;
+
 
 /**
  * Created by He on 2015/7/19.
@@ -62,10 +55,11 @@ public class ServerClient {
      *
      */
     public Message getUUID(String username,String password){
-//        String sql = "SELECT * FROM USER WHERE username = \'" + username +
-//                "\' AND digested_password = \'" + password + "\'";
-//        Message msg = MessageFactory.getDefaultAskMessage("", sql, Message.TYPE.AUTH);
-//        Message result = execute(msg);
+        try {
+            password = MD5Util.md5Encode(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Message msg = MessageFactory.getDefaultAuthMessage(username, password);
         Message result = execute(msg);
         return result;
@@ -78,6 +72,11 @@ public class ServerClient {
      * @return          如果注册成功会返回Message对象result,如果出错则会在status中返回错误信息
      */
     public Message signUp(String username,String password){
+        try {
+            password = MD5Util.md5Encode(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Message msg = MessageFactory.getDefaultSignMessage(username, password);
         Message result = execute(msg);
         return result;

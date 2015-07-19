@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
 /**
  * Classname:ServerMain
  *
@@ -35,10 +36,18 @@ public class ServerMain {
 //		Message msg = MessageFactory.getDefaultAskMessage("", sql, Message.TYPE.AUTH);
 //		String data =msg.data;
 //		String es = s.execute(msg).data;
-		int es = s.getUUID("Me","12345678").code;
-		System.out.println(es);
-		Message msg = s.signUp("213","232131");
-		System.out.println(msg.data);
+//		int es = s.getUUID("Me","12345678").code;
+//		System.out.println(es);
+//		Message msg = s.signUp("213","232131");
+//		System.out.println(msg.data);
+		try {
+			String str = new String("145");
+			System.out.println("原始：" + str);
+			System.out.println("MD5后：" + MD5Util.md5Encode(str));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 
 	}
 
