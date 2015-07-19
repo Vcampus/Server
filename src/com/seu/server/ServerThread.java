@@ -71,11 +71,12 @@ public class ServerThread extends Thread{
                         case UPDATE:
                             respond = dealUpdate(msg);
                             break;
-                        case OAUTH:
+                        case AUTH:
+                            respond = dealAuth(msg);
                             break;
                         default:
                             respond = MessageFactory.getDefaultRespondMessage(msg.uid,400,
-                                    "","Wrong from of type");
+                                    "","Invaild type.");
                             break;
                     }
                     ServerThreadManager.getServerThreadManager().publish(this, respond);
@@ -91,8 +92,6 @@ public class ServerThread extends Thread{
             e.printStackTrace();
         }
     }
-
-
 
     public Message dealGet(Message msg){
         if(oAuthHelper.isLogined(msg)){
@@ -112,7 +111,7 @@ public class ServerThread extends Thread{
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong from of data");
+                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Invalid form of data.");
             }
         }
         return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","invalid uuid");
@@ -135,14 +134,40 @@ public class ServerThread extends Thread{
 
             } catch (JSONException e) {
                 e.printStackTrace();
-                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong from of data");
+                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Invalid form of data.");
             }
         }
-        return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","invalid uuid");
+        return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","Invalid uuid.");
     }
 
-    public Message dealOauth(Message msg){
-        return null;
+
+    /**
+     *
+     * @param msg 从客户端接收的用于认证的报文，data中比较特殊，只包含username和password（在前端已加密过）
+     * @return  如果该用户已注册并且密码和用户名匹配，则返回该用户的信息
+     *          如果改用户已注册但是密码和用户名不匹配，则返回错误信息密码错误
+     *          如果未注册，则返回信息该用户未注册
+     */
+    public Message dealAuth(Message msg){
+        try{
+            String username = new JSONObject(msg.data).getString("username");
+            String password = new JSONObject(msg.data).getString("password");
+            if(oAuthHelper.isSigned(username)) {
+                String result = oAuthHelper.isCorrect(username,password);
+                if(result != null){
+                    return MessageFactory.getDefaultRespondMessage(msg.uid,200,result,"success");
+                }else
+                {
+                    return  MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong password.");
+                }
+            }
+            else
+                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","User hasn't signed up.");
+
+        }catch (JSONException e){
+            e.printStackTrace();
+            return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Invalid form of data.");
+        }
     }
 
 

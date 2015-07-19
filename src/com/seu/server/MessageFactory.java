@@ -34,6 +34,19 @@ public class MessageFactory {
         }
     }
 
+    public static Message getDefaultAuthMessage(String username,String password){
+        try {
+            JSONObject data = new JSONObject();
+            data.put("username",username);
+            data.put("password",password);
+            Message default_ask_message = new Message(UUID.randomUUID().toString(), Message.TYPE.AUTH,0,data.toString());
+            return default_ask_message;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      *
      * @param uid  返回报文的标志号，通常和对应的发送报文的uid一样
@@ -57,6 +70,14 @@ public class MessageFactory {
         }
     }
 
+    /**
+     *
+     * @param uid  返回报文的标志号，通常和对应的发送报文的uid一样
+     * @param code  服务器响应状态号
+     * @param jsonArray_data 返回的数据,此处必须是JSONArray类型的，如果是带“”号的数据返回后也无斜杠
+     * @param status    返回的状态，成功时为success，失败时为错误原因
+     * @return
+     */
     public static Message getDefaultRespondMessage(String uid,int code,JSONArray jsonArray_data,String status){
         try {
             JSONObject data = new JSONObject();
@@ -71,4 +92,8 @@ public class MessageFactory {
             return null;
         }
     }
+
+
+
+
 }

@@ -52,5 +52,14 @@ public class ServerClient {
         return new Message("", Message.TYPE.GET,0,"{\"data\",\"unknown error\"\"}");
     }
 
+    public String getUUID(String username,String password){
+//        String sql = "SELECT * FROM USER WHERE username = \'" + username +
+//                "\' AND digested_password = \'" + password + "\'";
+//        Message msg = MessageFactory.getDefaultAskMessage("", sql, Message.TYPE.AUTH);
+//        Message result = execute(msg);
+        Message msg = MessageFactory.getDefaultAuthMessage(username, password);
+        Message result = execute(msg);
+        return result.data;
+    }
 
 }

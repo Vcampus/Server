@@ -13,17 +13,7 @@ import javax.security.auth.login.LoginException;
  *
  */
 public class OAuthHelper{
-
-    private String musername;
-    private String mpassword;
-    private String muuid;
     private DbHelper dbHelper = new DbHelper();
-
-    public OAuthHelper(String username,String password){
-        musername = username;
-        mpassword = password;
-    }
-
     public OAuthHelper(){}
 
     /**
@@ -38,7 +28,7 @@ public class OAuthHelper{
             String uuid = askmsg.getString("uuid");
             if(uuid.equals(""))
                 return false;
-            String sql = "SELECT * FROM USER WHERE uuid = "+uuid;
+            String sql = "SELECT * FROM USER WHERE uuid = \'" + uuid + "\'";
             JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.SELECT));
             System.out.println("OAuthhelper.isLogined:"+dbrespond.getJSONArray("data").opt(0));
             if(dbrespond.getJSONArray("data").opt(0) != null)
@@ -51,5 +41,46 @@ public class OAuthHelper{
     }
 
 
+    /**
+     *
+     * @param username 需要匹配的用户名
+     * @return  如果该用户已注册则返回true，反之则返回false
+     */
+    public boolean isSigned (String username){
+        try {
+            String sql = "SELECT * FROM USER WHERE username = \'" + username + "\'";
+            JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.SELECT));
+            System.out.println("OAuthhelper.isLogined:"+dbrespond.getJSONArray("data").opt(0));
+            if(dbrespond.getJSONArray("data").opt(0) != null)
+                return true;
+            else return false;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    /**
+     *
+     * @param username 用户名
+     * @param password  密码
+     * @return          当用户名和密码匹配时，返回uuid，否则返回null
+     */
+    public  String isCorrect(String username,String password){
+        try {
+            String sql = "SELECT * FROM USER WHERE username = \'" + username +
+                    "\' AND digested_password = \'" + password + "\'";
+            JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.SELECT));
+            System.out.println("OAuthhelper.isCorrect:"+dbrespond.getJSONArray("data").opt(0));
+            if(dbrespond.getJSONArray("data").opt(0) != null){
+                JSONObject user = new JSONObject(dbrespond.getJSONArray("data").opt(0).toString());
+                String uuid = user.getString("uuid");
+                return uuid;
+            }
+            else return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

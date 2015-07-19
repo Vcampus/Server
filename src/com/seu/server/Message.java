@@ -14,7 +14,7 @@ public class Message implements Serializable {
         GET,
         POST,
         UPDATE,
-        OAUTH
+        AUTH
     }
     String uid;
     TYPE type;

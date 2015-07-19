@@ -27,10 +27,15 @@ public class ServerMain {
 
 		//String s=db.execute("select * from grade",1).toString();
 		ServerClient s=new ServerClient();
-		Message msg = MessageFactory.getDefaultAskMessage("11111111",
-				"INSERT INTO `course`.`user` (`username`, `digested_password`, `uuid`) VALUES ('Test2', '1232442', '2123312')", Message.TYPE.UPDATE);
-		String data =msg.data;
-		String es = s.execute(msg).data;
+		//Message msg = MessageFactory.getDefaultAskMessage("11111111",
+		//		"INSERT INTO `course`.`user` (`username`, `digested_password`, `uuid`) VALUES ('Test2', '1232442', '2123312')", Message.TYPE.UPDATE);
+//		String username = "Me";
+//		String password = "12345678";
+//		String sql = "SELECT * FROM USER WHERE username = \'"+ username + "\' AND digested_password = \'" +password+"\'";
+//		Message msg = MessageFactory.getDefaultAskMessage("", sql, Message.TYPE.AUTH);
+//		String data =msg.data;
+//		String es = s.execute(msg).data;
+		String es = s.getUUID("Me","12345678");
 		System.out.print(es);
 
 	}

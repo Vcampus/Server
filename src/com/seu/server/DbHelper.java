@@ -65,6 +65,7 @@ public class DbHelper {
         switch (TYPE_SQL){
             case SELECT:
                 try {
+                    System.out.println("DbHelper.excute:" + sql);
                     rs = executeQuery(sql);
                     ResultSetMetaData rsmd = rs.getMetaData();
 
@@ -85,7 +86,7 @@ public class DbHelper {
                     }
                     result.put("status","success");
                     result.put("data",dataarray);
-                    System.out.println("DbHelper.excute:"+result);
+                    System.out.println("DbHelper.excute.result:"+result);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -101,10 +102,11 @@ public class DbHelper {
                 }
             default:
                 try {
+                    System.out.println("DbHelper.excute:" + sql);
                     int success=executeUpdate(sql);
                     result.put("status", "success");
                     result.put("data","Update col:"+success);
-                    System.out.println("DbHelper.excute"+result);
+                    System.out.println("DbHelper.excute.result" + result);
 
                 }
                 catch (Exception e){
