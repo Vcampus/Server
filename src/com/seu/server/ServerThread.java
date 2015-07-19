@@ -117,8 +117,27 @@ public class ServerThread extends Thread{
         return MessageFactory.getDefaultRespondMessage(msg.uid,401,"","invalid uuid");
     }
 
+    /**
+     *
+     * @param msg   包含需要注册的用户名和密码的msg，
+     * @return      如果注册成功或者出现问题，则返回成功信息或者错误信息
+     */
     public Message dealPost(Message msg){
-        return null;
+        try{
+            String username = new JSONObject(msg.data).getString("username");
+            String password = new JSONObject(msg.data).getString("password");
+            if(!oAuthHelper.isSigned(username)) {
+                String result = oAuthHelper.addRegister(username,password);
+                if(result != null)
+                    return MessageFactory.getDefaultRespondMessage(msg.uid,200,"",result);
+                return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","failed");
+            }
+            else
+                return MessageFactory.getDefaultRespondMessage(msg.uid,403,"","Username has been registered.");
+        }catch (JSONException e){
+            e.printStackTrace();
+            return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Invalid form of data.");
+        }
     }
 
     public Message dealUpdate(Message msg){
@@ -154,12 +173,10 @@ public class ServerThread extends Thread{
             String password = new JSONObject(msg.data).getString("password");
             if(oAuthHelper.isSigned(username)) {
                 String result = oAuthHelper.isCorrect(username,password);
-                if(result != null){
+                if(result != null)
                     return MessageFactory.getDefaultRespondMessage(msg.uid,200,result,"success");
-                }else
-                {
-                    return  MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong password.");
-                }
+                else
+                    return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","Wrong password.");
             }
             else
                 return MessageFactory.getDefaultRespondMessage(msg.uid,400,"","User hasn't signed up.");

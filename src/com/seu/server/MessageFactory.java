@@ -34,12 +34,31 @@ public class MessageFactory {
         }
     }
 
+    /**
+     *
+     * @param username  用户名
+     * @param password  密码
+     * @return          认证用户名密码时所用，包含用于登陆获取uuid的用户名和密码
+     */
     public static Message getDefaultAuthMessage(String username,String password){
         try {
             JSONObject data = new JSONObject();
             data.put("username",username);
             data.put("password",password);
             Message default_ask_message = new Message(UUID.randomUUID().toString(), Message.TYPE.AUTH,0,data.toString());
+            return default_ask_message;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Message getDefaultSignMessage(String username,String password){
+        try {
+            JSONObject data = new JSONObject();
+            data.put("username",username);
+            data.put("password",password);
+            Message default_ask_message = new Message(UUID.randomUUID().toString(), Message.TYPE.POST,0,data.toString());
             return default_ask_message;
         } catch (JSONException e) {
             e.printStackTrace();

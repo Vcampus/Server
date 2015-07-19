@@ -52,14 +52,41 @@ public class ServerClient {
         return new Message("", Message.TYPE.GET,0,"{\"data\",\"unknown error\"\"}");
     }
 
-    public String getUUID(String username,String password){
+
+    /**
+     *
+     * @param username  认证的用户名
+     * @param password  认证的密码
+     * @return          如果匹配会返回Message对象result，通过result里的data可以取出来uuid
+     * 如果出错则会在status中返回错误信息
+     *
+     */
+    public Message getUUID(String username,String password){
 //        String sql = "SELECT * FROM USER WHERE username = \'" + username +
 //                "\' AND digested_password = \'" + password + "\'";
 //        Message msg = MessageFactory.getDefaultAskMessage("", sql, Message.TYPE.AUTH);
 //        Message result = execute(msg);
         Message msg = MessageFactory.getDefaultAuthMessage(username, password);
         Message result = execute(msg);
-        return result.data;
+        return result;
     }
+
+    /**
+     *
+     * @param username  用户名
+     * @param password  密码
+     * @return          如果注册成功会返回Message对象result,如果出错则会在status中返回错误信息
+     */
+    public Message signUp(String username,String password){
+        Message msg = MessageFactory.getDefaultSignMessage(username, password);
+        Message result = execute(msg);
+        return result;
+    }
+
+
+
+
+
+
 
 }

@@ -35,8 +35,10 @@ public class ServerMain {
 //		Message msg = MessageFactory.getDefaultAskMessage("", sql, Message.TYPE.AUTH);
 //		String data =msg.data;
 //		String es = s.execute(msg).data;
-		String es = s.getUUID("Me","12345678");
-		System.out.print(es);
+		int es = s.getUUID("Me","12345678").code;
+		System.out.println(es);
+		Message msg = s.signUp("213","232131");
+		System.out.println(msg.data);
 
 	}
 

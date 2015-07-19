@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.security.auth.login.LoginException;
+import java.util.UUID;
 
 /**
  *
@@ -50,7 +51,7 @@ public class OAuthHelper{
         try {
             String sql = "SELECT * FROM USER WHERE username = \'" + username + "\'";
             JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.SELECT));
-            System.out.println("OAuthhelper.isLogined:"+dbrespond.getJSONArray("data").opt(0));
+            System.out.println("OAuthhelper.isSigned:"+dbrespond.getJSONArray("data").opt(0));
             if(dbrespond.getJSONArray("data").opt(0) != null)
                 return true;
             else return false;
@@ -80,6 +81,28 @@ public class OAuthHelper{
             else return null;
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /**
+     *
+     * @param username  用户名
+     * @param password  密码
+     * @return          如果注册成功返回success，如果失败则返回错误信息
+     */
+    public String addRegister(String username,String password){
+        try{
+            String uuid = UUID.randomUUID().toString();
+            String sql = "INSERT INTO `course`.`user` (`username`, `digested_password`, `uuid`)" +
+                    " VALUES ('" + username +
+                    "', '" + password +
+                    "', '" + uuid + "')";
+            JSONObject dbrespond = new JSONObject(dbHelper.execute(sql,DbHelper.UPDATA));
+            System.out.println("OAuthhelper.addRegister:"+dbrespond.getString("data"));
+            return dbrespond.getString("status");
+        }catch (JSONException e){
             return null;
         }
     }
