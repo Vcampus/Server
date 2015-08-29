@@ -13,6 +13,8 @@ import java.net.Socket;
  */
 public class ServerThread extends Thread{
     private Socket socket;
+    private BufferedReader br;
+    private PrintWriter pw;
     ObjectInputStream ois;
     ObjectOutputStream oos;
     OAuthHelper oAuthHelper;

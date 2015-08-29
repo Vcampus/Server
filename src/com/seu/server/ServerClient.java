@@ -82,20 +82,7 @@ public class ServerClient {
         return result;
     }
 
-    /**
-     *
-     * @return 如果Client关闭成功则返回true，反之返回false
-     */
-    public boolean close(){
-        try{
-            ois.close();
-            oos.close();
-            return true;
-        }catch (IOException e){
-            e.printStackTrace();
-            return false;
-        }
-    }
+
 
 
 
